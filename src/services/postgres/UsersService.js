@@ -1,6 +1,5 @@
-/* eslint-disable no-underscore-dangle */
-const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
+const { nanoid } = require('nanoid');
 const bcrypt = require('bcrypt');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
@@ -13,7 +12,6 @@ class UsersService {
 
   async addUser({ username, password, fullname }) {
     await this.verifyNewUsername(username);
-
     const id = `user-${nanoid(16)}`;
     const hashedPassword = await bcrypt.hash(password, 10);
     const query = {
@@ -32,10 +30,11 @@ class UsersService {
   async verifyNewUsername(username) {
     const query = {
       text: 'SELECT username FROM users WHERE username = $1',
-      value: [username],
+      values: [username],
     };
 
     const result = await this._pool.query(query);
+
     if (result.rows.length > 0) {
       throw new InvariantError('Gagal menambahkan user. Username sudah digunakan.');
     }
@@ -75,16 +74,8 @@ class UsersService {
     if (!match) {
       throw new AuthenticationError('Kredensial yang Anda berikan salah');
     }
-    return id;
-  }
 
-  async getUsersByUsername(username) {
-    const query = {
-      text: 'SELECT id, username, fullname FROM users WHERE username LIKE $1',
-      values: [`%${username}%`],
-    };
-    const result = await this._pool.query(query);
-    return result.rows;
+    return id;
   }
 }
 

@@ -1,6 +1,5 @@
-/* eslint-disable no-underscore-dangle */
-const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
+const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
 
 class CollaborationsService {
@@ -29,7 +28,9 @@ class CollaborationsService {
       text: 'DELETE FROM collaborations WHERE note_id = $1 AND user_id = $2 RETURNING id',
       values: [noteId, userId],
     };
+
     const result = await this._pool.query(query);
+
     if (!result.rows.length) {
       throw new InvariantError('Kolaborasi gagal dihapus');
     }
@@ -48,4 +49,5 @@ class CollaborationsService {
     }
   }
 }
+
 module.exports = CollaborationsService;
